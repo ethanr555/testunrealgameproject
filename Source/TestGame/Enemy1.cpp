@@ -13,6 +13,8 @@ AEnemy1::AEnemy1()
 	bMoveForward = false;
 	bRotateLeft = false;
 	bRotateRight = false;
+	healthPoints = 5.0f;
+	hurtCD = 0.0f;
 	team = 2;
 	UCharacterMovementComponent* temporary = GetCharacterMovement();
 	temporary->MaxWalkSpeed = 300.0f;
@@ -26,12 +28,12 @@ AEnemy1::AEnemy1()
 	if (MeshTemp.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(MeshTemp.Object);
-		//skeletal->SetSkeletalMesh(Mesh.Object);
 	}
 	static ConstructorHelpers::FObjectFinder<UMaterial>MaterialTemp(TEXT("/Game/Enemy1.Enemy1"));
 	if (MaterialTemp.Succeeded())
 	{
 		EnemyMaterialInstance = UMaterialInstanceDynamic::Create(MaterialTemp.Object, GetMesh());
+		GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
 		GetMesh()->SetMaterial(0, EnemyMaterialInstance);
 		GetMesh()->SetRelativeScale3D(FVector(3.69f, 3.69f, 3.69f));
 		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -100.0f));
@@ -73,6 +75,19 @@ void AEnemy1::Tick(float DeltaTime)
 	{
 		Controller->SetControlRotation(Controller->GetControlRotation().Add(0.0f, 1.0f, 0.0f));
 		SetActorRotation(Controller->GetControlRotation());
+	}
+	if (healthPoints <= 0.0f)
+	{
+		Killed();
+	}
+	if (hurtCD > 0.0f)
+	{
+		hurtCD = hurtCD - 0.1f;
+	}
+	else if (hurtCD > -1.0f)
+	{
+		EnemyMaterialInstance->SetScalarParameterValue(TEXT("bHurt"), 0.0f);
+		hurtCD = -1.0f;
 	}
 
 
@@ -132,7 +147,7 @@ void AEnemy1::ToggleRotate(bool direction)
 void AEnemy1::OnOverlapBeginProjectile(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
 {
 
-	ABaseProjectile* theActor = Cast<ABaseProjectile>(OtherActor);
+	/*ABaseProjectile* theActor = Cast<ABaseProjectile>(OtherActor);
 	if (theActor && theActor->team != 2)
 	{
 		float Gen_Num = FMath::RandRange(0.0f, 1.0f);
@@ -141,7 +156,24 @@ void AEnemy1::OnOverlapBeginProjectile(UPrimitiveComponent* HitComponent, AActor
 				SpawnPowerUp();
 		}	
 		Destroy();
+	}*/
+}
+
+void AEnemy1::TakeSomeDamage(float damage)
+{
+	healthPoints -= damage;
+	hurtCD = 3.0f;
+	EnemyMaterialInstance->SetScalarParameterValue(TEXT("bHurt"), 1.0f);
+
+}
+
+void AEnemy1::Killed()
+{
+	if (FMath::FRandRange(0.0, 1.0) < 0.25f)
+	{
+		SpawnPowerUp();
 	}
+	Destroy();
 }
 
 void AEnemy1::PostInitializeComponents()

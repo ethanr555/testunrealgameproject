@@ -132,7 +132,7 @@ void ATopDownCharacter::Fire(FVector LaunchDirection)
 			if (Projectile)
 			{
 				FVector LaunchDirection = MuzzleRotation.Vector();
-				Projectile->Initialize(projectileScale, projectileSpeed, projectileLifeSpan, 1);
+				Projectile->Initialize(projectileScale, projectileSpeed, projectileLifeSpan, 1, false, 0);
 				//Projectile->FinishSpawning( FTransform(MuzzleRotation, MuzzleLocation));
 				Projectile->FireInDirection(LaunchDirection);
 			}

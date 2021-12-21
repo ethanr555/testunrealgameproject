@@ -51,6 +51,10 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = Movement)
 	UMaterialInstanceDynamic* EnemyMaterialInstance;
 	uint8 team;
+	float healthPoints;
+	void TakeSomeDamage(float damage);
+	void Killed();
+	float hurtCD;
 
 
 

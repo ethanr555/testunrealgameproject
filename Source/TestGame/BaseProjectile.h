@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "BaseProjectile.generated.h"
 
 UCLASS()
@@ -31,6 +34,9 @@ public:
 	uint8 team;
 	bool bDoesPierce;
 	uint8 numberOfPierces;
+	UPROPERTY(VisibleDefaultsOnly, Category = Particle)
+	UParticleSystem* explosion;
+	virtual void LifeSpanExpired() override;
 
 
 protected:
@@ -42,7 +48,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void FireInDirection(const FVector& ShootDirection);
 	void Initialize(float scale1, float speed1, float life1, uint8 team1, bool bPiercing1, uint8 pierces);
+	UFUNCTION()
 	void OnOverlapBeginEnemy(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
-
+	virtual void PostInitializeComponents() override;
 
 };
