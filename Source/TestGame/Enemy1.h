@@ -50,6 +50,7 @@ public:
 	UStaticMeshComponent* EnemyMeshComponent;
 	UPROPERTY(VisibleDefaultsOnly, Category = Movement)
 	UMaterialInstanceDynamic* EnemyMaterialInstance;
+	uint8 team;
 
 
 

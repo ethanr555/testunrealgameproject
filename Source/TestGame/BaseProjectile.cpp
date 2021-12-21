@@ -2,6 +2,7 @@
 
 
 #include "BaseProjectile.h"
+#include "Enemy1.h"
 
 // Sets default values
 ABaseProjectile::ABaseProjectile()
@@ -11,6 +12,8 @@ ABaseProjectile::ABaseProjectile()
 	scale = 1.0f;
 	speed = 5000.0f;
 	team = 0;
+	bDoesPierce = false;
+	numberOfPierces = 0;
 	if (!RootComponent)
 	{
 		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileSceneComponent"));
@@ -60,7 +63,7 @@ ABaseProjectile::ABaseProjectile()
 }
 
 
-void ABaseProjectile::Initialize(float scale1, float speed1, float life1, uint8 team1)
+void ABaseProjectile::Initialize(float scale1, float speed1, float life1, uint8 team1, bool bPiercing1, uint8 pierces)
 {
 	ProjectileMeshComponent->SetRelativeScale3D(FVector(scale1, scale1, scale1));
 	ProjectileMovementComponent->InitialSpeed = speed1;
@@ -68,6 +71,8 @@ void ABaseProjectile::Initialize(float scale1, float speed1, float life1, uint8 
 	CollisionComponent->InitSphereRadius(scale1);
 	team = team1;
 	SetLifeSpan(life1);
+	bDoesPierce = bPiercing1;
+	numberOfPierces = pierces;
 
 
 
@@ -90,4 +95,21 @@ void ABaseProjectile::Tick(float DeltaTime)
 void ABaseProjectile::FireInDirection(const FVector& ShootDirection)
 {
 	ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;
+}
+
+void ABaseProjectile::OnOverlapBeginEnemy(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
+{
+
+	AEnemy1* theActor = Cast<AEnemy1>(OtherActor);
+	if (theActor && theActor->team != team)
+	{
+		if (bDoesPierce)
+		{
+			--numberOfPierces;
+			if (numberOfPierces <= 0)
+			{
+				Destroy();
+			}
+		}
+	}
 }

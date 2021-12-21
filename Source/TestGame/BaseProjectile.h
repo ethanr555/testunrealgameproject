@@ -29,6 +29,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = "true"), Category = Projectile)
 	float speed;
 	uint8 team;
+	bool bDoesPierce;
+	uint8 numberOfPierces;
 
 
 protected:
@@ -39,6 +41,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void FireInDirection(const FVector& ShootDirection);
-	void Initialize(float scale1, float speed1, float life1, uint8 team1);
+	void Initialize(float scale1, float speed1, float life1, uint8 team1, bool bPiercing1, uint8 pierces);
+	void OnOverlapBeginEnemy(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
+
 
 };

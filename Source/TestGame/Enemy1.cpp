@@ -13,6 +13,7 @@ AEnemy1::AEnemy1()
 	bMoveForward = false;
 	bRotateLeft = false;
 	bRotateRight = false;
+	team = 2;
 	UCharacterMovementComponent* temporary = GetCharacterMovement();
 	temporary->MaxWalkSpeed = 300.0f;
 	static ConstructorHelpers::FObjectFinder<UMaterial>Material(TEXT("/Game/PowerUpRed.PowerUpRed"));
